@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      UserRole @default(user)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  terms     MedicalTerm[]
+  phrases   MedicalPhrase[]
+  categories Category[]
+
+  @@map("users")
+}
+
+model MedicalTerm {
+  id            String   @id @default(cuid())
+  term          String
+  meaning       String
+  pronunciation String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  createdBy     String
+  user          User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  categories MedicalTermCategory[]
+
+  @@map("medical_terms")
+}
+
+model MedicalPhrase {
+  id          String   @id @default(cuid())
+  phrase      String
+  explanation String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+  user        User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  categories MedicalPhraseCategory[]
+
+  @@map("medical_phrases")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  color       String   @default("#3b82f6")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String
+  user        User     @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  termCategories   MedicalTermCategory[]
+  phraseCategories MedicalPhraseCategory[]
+
+  @@map("categories")
+}
+
+model MedicalTermCategory {
+  id       String @id @default(cuid())
+  termId   String
+  categoryId String
+
+  term     MedicalTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
+  category Category    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([termId, categoryId])
+  @@map("medical_term_categories")
+}
+
+model MedicalPhraseCategory {
+  id       String @id @default(cuid())
+  phraseId String
+  categoryId String
+
+  phrase   MedicalPhrase @relation(fields: [phraseId], references: [id], onDelete: Cascade)
+  category Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([phraseId, categoryId])
+  @@map("medical_phrase_categories")
+}
+
+enum UserRole {
+  admin
+  user
+}
