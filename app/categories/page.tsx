@@ -12,16 +12,21 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { AddCategoryDialog } from "../../components/add-category-dialog";
 import { Category } from "../../types";
+import { useAuth } from "../../components/auth-provider";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    if (user) {
+      fetchCategories();
+    }
+  }, [user]);
 
   const fetchCategories = async () => {
     try {
@@ -72,96 +77,135 @@ export default function CategoriesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen bg-background">
+      <div className="flex min-h-screen bg-background">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto p-8">
-          <div className="text-center">Loading...</div>
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+          <div className="text-center">در حال بارگذاری...</div>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <motion.div 
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
-              <p className="text-muted-foreground">
-                Organize medical terms and phrases with categories
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                🏷️ دسته‌بندی‌ها
+              </h1>
+              <p className="text-muted-foreground text-sm md:text-base">
+                سازماندهی اصطلاحات و عبارات پزشکی با دسته‌بندی
               </p>
             </div>
             <Button
               onClick={() => setShowAddDialog(true)}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto shadow-lg transition-all duration-300 hover:scale-105"
             >
-              🏷️ Add New Category
+              ➕ افزودن دسته‌بندی جدید
             </Button>
-          </div>
+          </motion.div>
 
           {/* Search */}
-          <Card>
-            <CardContent className="p-4">
-              <Input
-                placeholder="Search categories..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
-            </CardContent>
-          </Card>
-
-          {/* Categories Grid */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredCategories.map((category) => (
-              <Card
-                key={category.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer"
-                style={{ borderLeft: `4px solid ${category.color}` }}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-4 h-4 rounded-full"
-                      style={{ backgroundColor: category.color }}
-                    ></div>
-                    <CardTitle className="text-lg">{category.name}</CardTitle>
-                  </div>
-                  {category.description && (
-                    <CardDescription>{category.description}</CardDescription>
-                  )}
-                </CardHeader>
-                <CardContent>
-                  <div className="text-xs text-muted-foreground">
-                    Created: {new Date(category.createdAt).toLocaleDateString()}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {filteredCategories.length === 0 && !isLoading && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <div className="text-6xl mb-4">🏷️</div>
-                <h3 className="text-lg font-semibold">No categories found</h3>
-                <p className="text-muted-foreground">
-                  {categories.length === 0
-                    ? "Get started by creating your first category"
-                    : "Try adjusting your search criteria"}
-                </p>
-                {categories.length === 0 && (
-                  <Button
-                    onClick={() => setShowAddDialog(true)}
-                    className="mt-4"
-                  >
-                    Create Your First Category
-                  </Button>
-                )}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card className="shadow-md border-0 bg-linear-to-r from-blue-50 to-indigo-50">
+              <CardContent className="p-4 md:p-6">
+                <Input
+                  placeholder="جستجو در دسته‌بندی‌ها..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full text-right"
+                />
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Categories Grid */}
+          <motion.div 
+            className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            layout
+          >
+            <AnimatePresence>
+              {filteredCategories.map((category, index) => (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  layout
+                >
+                  <Card
+                    className="hover:shadow-xl transition-all duration-300 border-0 bg-white shadow-sm hover:border-blue-200 cursor-pointer group"
+                    style={{ 
+                      borderRight: `4px solid ${category.color}`,
+                      borderLeft: 'none'
+                    }}
+                  >
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-5 h-5 rounded-full shadow-sm group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundColor: category.color }}
+                    ></div>
+                        <CardTitle className="text-lg font-bold text-gray-800">
+                          {category.name}
+                        </CardTitle>
+                      </div>
+                      {category.description && (
+                        <CardDescription className="text-right text-gray-600 mt-2 line-clamp-2">
+                          {category.description}
+                        </CardDescription>
+                      )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-xs text-muted-foreground text-left">
+                        ایجاد شده: {new Date(category.createdAt).toLocaleDateString('fa-IR')}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {filteredCategories.length === 0 && !isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="text-center py-12 border-0 shadow-lg bg-linear-to-br from-gray-50 to-blue-50">
+                <CardContent>
+                  <div className="text-6xl mb-4">🏷️</div>
+                  <h3 className="text-lg font-semibold mb-2">هیچ دسته‌بندی یافت نشد</h3>
+                  <p className="text-muted-foreground mb-4">
+                    {categories.length === 0
+                      ? "با ایجاد اولین دسته‌بندی شروع کنید"
+                      : "معیارهای جستجوی خود را تنظیم کنید"}
+                  </p>
+                  {categories.length === 0 && (
+                    <Button
+                      onClick={() => setShowAddDialog(true)}
+                      className="bg-blue-600 hover:bg-blue-700 shadow-lg"
+                    >
+                      ایجاد اولین دسته‌بندی
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
         </div>
 

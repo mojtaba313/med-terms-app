@@ -1,95 +1,36 @@
-import { prisma } from '@/lib/prisma'
-import { verifyJWT } from '@/lib/auth'
-import { NextRequest, NextResponse } from 'next/server'
-
-export async function GET(request: NextRequest) {
-  try {
-    const token = request.cookies.get('token')?.value
-    
-    if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    try {
-      await verifyJWT(token)
-    } catch {
-      return NextResponse.json(
-        { success: false, error: 'Invalid token' },
-        { status: 401 }
-      )
-    }
-
-    const terms = await prisma.medicalTerm.findMany({
-      include: {
-        categories: {
-          include: {
-            category: true
-          }
-        },
-        user: {
-          select: {
-            username: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
-
-    // Transform the data to match our frontend types
-    const transformedTerms = terms.map(term => ({
-      ...term,
-      categories: term.categories.map(tc => tc.category)
-    }))
-
-    return NextResponse.json({
-      success: true,
-      data: transformedTerms
-    })
-  } catch (error) {
-    console.error('Error fetching terms:', error)
-    return NextResponse.json(
-      { success: false, error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { verifyJWT } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('token')?.value
-    
+    const token = request.cookies.get("token")?.value;
     if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const payload = await verifyJWT(token)
-
-    const { term, meaning, pronunciation, categoryIds } = await request.json()
+    const payload = await verifyJWT(token);
+    const { term, meaning, pronunciation, categoryIds = [] } = await request.json();
 
     if (!term || !meaning) {
       return NextResponse.json(
-        { success: false, error: 'Term and meaning are required' },
+        { error: "Term and meaning are required" },
         { status: 400 }
-      )
+      );
     }
 
+    // Fix: Handle categories properly
     const medicalTerm = await prisma.medicalTerm.create({
       data: {
         term,
         meaning,
         pronunciation,
         createdBy: payload.userId,
-        categories: categoryIds && categoryIds.length > 0 ? {
+        categories: categoryIds.length > 0 ? {
           create: categoryIds.map((categoryId: string) => ({
-            categoryId
+            category: {
+              connect: { id: categoryId }
+            }
           }))
         } : undefined
       },
@@ -98,30 +39,76 @@ export async function POST(request: NextRequest) {
           include: {
             category: true
           }
-        },
-        user: {
-          select: {
-            username: true
-          }
         }
       }
-    })
+    });
 
-    // Transform the data
+    // Transform the response to match the frontend expectations
     const transformedTerm = {
       ...medicalTerm,
       categories: medicalTerm.categories.map(tc => tc.category)
+    };
+
+    return NextResponse.json({ 
+      success: true, 
+      data: transformedTerm 
+    });
+
+  } catch (error: any) {
+    console.error("Error creating term:", error);
+    
+    if (error.code === 'P2018') {
+      return NextResponse.json(
+        { error: "One or more categories not found" },
+        { status: 400 }
+      );
+    }
+    
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const token = request.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    return NextResponse.json({
-      success: true,
-      data: transformedTerm
-    })
+    await verifyJWT(token);
+
+    const terms = await prisma.medicalTerm.findMany({
+      include: {
+        categories: {
+          include: {
+            category: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    // Transform the response
+    const transformedTerms = terms.map(term => ({
+      ...term,
+      categories: term.categories.map(tc => tc.category)
+    }));
+
+    return NextResponse.json({ 
+      success: true, 
+      data: transformedTerms 
+    });
+
   } catch (error) {
-    console.error('Error creating term:', error)
+    console.error("Error fetching terms:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 }
-    )
+    );
   }
 }

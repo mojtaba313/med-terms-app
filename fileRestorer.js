@@ -10,7 +10,7 @@ function parseMergedFile(inputFilePath) {
     const files = [];
     
     // الگوی regex برای شناسایی بخش‌های فایل
-    const fileSectionRegex = /the codes of file with route : (.*?) :\n(.*?)\n(.*?)\n-----/gs;
+    const fileSectionRegex = /\/\/ File: (.*?)\n(.*?)\n-----/gs;
     
     let match;
     while ((match = fileSectionRegex.exec(content)) !== null) {

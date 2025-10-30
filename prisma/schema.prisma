@@ -16,8 +16,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  terms     MedicalTerm[]
-  phrases   MedicalPhrase[]
+  terms      MedicalTerm[]
+  phrases    MedicalPhrase[]
   categories Category[]
 
   @@map("users")
@@ -69,8 +69,8 @@ model Category {
 }
 
 model MedicalTermCategory {
-  id       String @id @default(cuid())
-  termId   String
+  id         String @id @default(cuid())
+  termId     String
   categoryId String
 
   term     MedicalTerm @relation(fields: [termId], references: [id], onDelete: Cascade)
@@ -81,8 +81,8 @@ model MedicalTermCategory {
 }
 
 model MedicalPhraseCategory {
-  id       String @id @default(cuid())
-  phraseId String
+  id         String @id @default(cuid())
+  phraseId   String
   categoryId String
 
   phrase   MedicalPhrase @relation(fields: [phraseId], references: [id], onDelete: Cascade)

@@ -261,35 +261,35 @@ async function main() {
       // Check if flashcard already exists
       let existingFlashcard;
       
-      if (flashcardData.medicalTermId) {
-        existingFlashcard = await prisma.flashcard.findFirst({
-          where: { medicalTermId: flashcardData.medicalTermId }
-        })
-      } else if (flashcardData.medicalPhraseId) {
-        existingFlashcard = await prisma.flashcard.findFirst({
-          where: { medicalPhraseId: flashcardData.medicalPhraseId }
-        })
-      } else {
-        existingFlashcard = await prisma.flashcard.findFirst({
-          where: { 
-            front: flashcardData.front,
-            type: 'custom'
-          }
-        })
-      }
+      // if (flashcardData.medicalTermId) {
+      //   existingFlashcard = await prisma.flashcard.findFirst({
+      //     where: { medicalTermId: flashcardData.medicalTermId }
+      //   })
+      // } else if (flashcardData.medicalPhraseId) {
+      //   existingFlashcard = await prisma.flashcard.findFirst({
+      //     where: { medicalPhraseId: flashcardData.medicalPhraseId }
+      //   })
+      // } else {
+      //   existingFlashcard = await prisma.flashcard.findFirst({
+      //     where: { 
+      //       front: flashcardData.front,
+      //       type: 'custom'
+      //     }
+      //   })
+      // }
 
-      if (existingFlashcard) {
-        await prisma.flashcard.update({
-          where: { id: existingFlashcard.id },
-          data: flashcardData
-        })
-        console.log(`✅ Flashcard updated: ${flashcardData.front}`)
-      } else {
-        await prisma.flashcard.create({
-          data: flashcardData
-        })
-        console.log(`✅ Flashcard created: ${flashcardData.front}`)
-      }
+      // if (existingFlashcard) {
+      //   await prisma.flashcard.update({
+      //     where: { id: existingFlashcard.id },
+      //     data: flashcardData
+      //   })
+      //   console.log(`✅ Flashcard updated: ${flashcardData.front}`)
+      // } else {
+      //   await prisma.flashcard.create({
+      //     data: flashcardData
+      //   })
+      //   console.log(`✅ Flashcard created: ${flashcardData.front}`)
+      // }
     } catch (error) {
       console.log(`❌ Error with flashcard ${flashcardData.front}:`, (error as any).message)
     }

@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: hsl(0 0% 100%);
+  --color-background: hsl(210 40% 98%);
   --color-foreground: hsl(222.2 84% 4.9%);
   --color-card: hsl(0 0% 100%);
   --color-card-foreground: hsl(222.2 84% 4.9%);
   --color-popover: hsl(0 0% 100%);
   --color-popover-foreground: hsl(222.2 84% 4.9%);
-  --color-primary: hsl(222.2 47.4% 11.2%);
+  --color-primary: hsl(217 91% 60%);
   --color-primary-foreground: hsl(210 40% 98%);
   --color-secondary: hsl(210 40% 96%);
   --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
@@ -19,34 +19,170 @@
   --color-destructive-foreground: hsl(210 40% 98%);
   --color-border: hsl(214.3 31.8% 91.4%);
   --color-input: hsl(214.3 31.8% 91.4%);
-  --color-ring: hsl(222.2 84% 4.9%);
+  --color-ring: hsl(217 91% 60%);
   --color-chart-1: hsl(12 76% 61%);
   --color-chart-2: hsl(173 58% 39%);
   --color-chart-3: hsl(197 37% 24%);
   --color-chart-4: hsl(43 74% 66%);
   --color-chart-5: hsl(27 87% 67%);
-  
-  --radius: 0.5rem;
+
+  --radius: 1rem;
 }
 
 * {
   border-color: hsl(var(--border));
+  box-sizing: border-box;
 }
 
 body {
-  /* background-color: hsl(var(--background));
-  color: hsl(var(--foreground)); */
-  @apply bg-green-500;
+  @apply bg-linear-to-br from-blue-50 via-white to-cyan-50;
+  font-family: "Vazirmatn", "Segoe UI", system-ui, sans-serif;
+  direction: rtl;
+  line-height: 1.6;
 }
 
-.container {
-  width: 100%;
-  margin-inline: auto;
-  padding-inline: 2rem;
+/* طرح شیشه‌ای و مدرن */
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
 }
 
-@media (min-width: 1400px) {
-  .container {
-    max-width: 1400px;
+/* کارت‌های مدرن با سایه‌های زیبا */
+.modern-card {
+  @apply bg-white/80 backdrop-blur-sm border border-white/50 shadow-xl;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.7) 100%
+  );
+}
+
+/* دکمه‌های مدرن */
+.btn-modern {
+  @apply bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 
+         text-white font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-xl 
+         transform hover:scale-105 transition-all duration-300;
+}
+
+/* انیمیشن‌های جدید */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
   }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* هدر گرادینت پزشکی */
+.medical-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.medical-gradient-light {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.medical-gradient-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* استایل‌های مخصوص پزشکی */
+.stethoscope-icon {
+  @apply text-blue-500 animate-pulse;
+}
+
+.heart-beat {
+  animation: heartBeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* اسکرول بار زیبا */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* افکت‌های hover پیشرفته */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* متن‌های گرادینت */
+.gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* استایل‌های ریسپانسیو */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: blur(8px);
+  }
+}
+
+/* انیمیشن fade-in برای محتوا */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
 }

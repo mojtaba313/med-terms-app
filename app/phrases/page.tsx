@@ -12,6 +12,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { AddPhraseDialog } from "../../components/add-phrase-dialog";
 import { MedicalPhrase, Category } from "../../types";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function PhrasesPage() {
   const [phrases, setPhrases] = useState<MedicalPhrase[]>([]);
@@ -21,7 +22,8 @@ export default function PhrasesPage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
-
+  
+  console.log(phrases);
   useEffect(() => {
     fetchData();
   }, []);
@@ -105,7 +107,7 @@ export default function PhrasesPage() {
       <div className="flex h-screen bg-background">
         <Sidebar />
         <main className="flex-1 overflow-y-auto p-8">
-          <div className="text-center">Loading...</div>
+          <div className="text-center">در حال بارگذاری...</div>
         </main>
       </div>
     );
@@ -114,106 +116,139 @@ export default function PhrasesPage() {
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <motion.div
+            className="flex justify-between items-center"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">
-                Medical Phrases
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                💬 عبارات پزشکی
               </h1>
-              <p className="text-muted-foreground">
-                Manage and browse medical phrases and abbreviations
+              <p className="text-muted-foreground text-sm md:text-base">
+                مدیریت و یادگیری عبارات پزشکی
               </p>
             </div>
             <Button
               onClick={() => setShowAddDialog(true)}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-blue-600 hover:bg-blue-700 shadow-lg transition-all duration-300 hover:scale-105"
             >
-              💬 Add New Phrase
+              ➕ افزودن عبارت جدید
             </Button>
-          </div>
+          </motion.div>
 
           {/* Filters */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex gap-4 flex-col sm:flex-row">
-                <div className="flex-1">
-                  <Input
-                    placeholder="Search phrases or explanations..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full"
-                  />
-                </div>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-3 py-2 border rounded-md"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Phrases Grid */}
-          <div className="grid gap-4 md:grid-cols-2">
-            {filteredPhrases.map((phrase) => (
-              <Card
-                key={phrase.id}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-xl text-blue-600">
-                    {phrase.phrase}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 mb-3">{phrase.explanation}</p>
-                  <div className="flex flex-wrap gap-1">
-                    {phrase.categories.map((category) => (
-                      <span
-                        key={category.id}
-                        className="px-2 py-1 text-xs rounded-full text-white"
-                        style={{ backgroundColor: category.color }}
-                      >
-                        {category.name}
-                      </span>
-                    ))}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card className="shadow-md border-0 bg-linear-to-r from-blue-50 to-indigo-50">
+              <CardContent className="p-4 md:p-6">
+                <div className="flex gap-4 flex-col md:flex-row">
+                  <div className="flex-1">
+                    <Input
+                      placeholder="جستجو در عبارات و توضیحات..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full text-right"
+                    />
                   </div>
-                  <div className="mt-3 text-xs text-muted-foreground">
-                    Created: {new Date(phrase.createdAt).toLocaleDateString()}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {filteredPhrases.length === 0 && !isLoading && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <div className="text-6xl mb-4">💬</div>
-                <h3 className="text-lg font-semibold">No phrases found</h3>
-                <p className="text-muted-foreground">
-                  {phrases.length === 0
-                    ? "Get started by adding your first medical phrase"
-                    : "Try adjusting your search or filter criteria"}
-                </p>
-                {phrases.length === 0 && (
-                  <Button
-                    onClick={() => setShowAddDialog(true)}
-                    className="mt-4"
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="px-3 py-2 border rounded-md bg-white"
                   >
-                    Add Your First Phrase
-                  </Button>
-                )}
+                    <option value="">همه دسته‌بندی‌ها</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Phrases Grid */}
+          <motion.div
+            className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+            layout
+          >
+            <AnimatePresence>
+              {filteredPhrases.map((phrase, index) => (
+                <motion.div
+                  key={phrase.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  layout
+                >
+                  <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white shadow-sm hover:border-blue-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-xl font-bold text-gray-800 text-right">
+                        {phrase.phrase}
+                      </CardTitle>
+                      <CardDescription className="text-right text-gray-600">
+                        {phrase.explanation}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {phrase.categories.map((category) => (
+                          <span
+                            key={category.id}
+                            className="px-2 py-1 text-xs rounded-full text-white shadow-sm"
+                            style={{ backgroundColor: category.color }}
+                          >
+                            {category.name}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="text-xs text-muted-foreground text-left">
+                        ایجاد شده:{" "}
+                        {new Date(phrase.createdAt).toLocaleDateString("fa-IR")}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {filteredPhrases.length === 0 && !isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card className="text-center py-12 border-0 shadow-lg bg-linear-to-br from-gray-50 to-blue-50">
+                <CardContent>
+                  <div className="text-6xl mb-4">💬</div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    هیچ عبارتی یافت نشد
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    {phrases.length === 0
+                      ? "با افزودن اولین عبارت پزشکی شروع کنید"
+                      : "معیارهای جستجوی خود را تنظیم کنید"}
+                  </p>
+                  {phrases.length === 0 && (
+                    <Button
+                      onClick={() => setShowAddDialog(true)}
+                      className="bg-blue-600 hover:bg-blue-700 shadow-lg"
+                    >
+                      افزودن اولین عبارت
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
         </div>
 
