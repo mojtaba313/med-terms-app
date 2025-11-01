@@ -16,7 +16,7 @@ export function Sidebar() {
     const savedBasket = localStorage.getItem("flashcard-basket");
     if (savedBasket) {
       const basket = JSON.parse(savedBasket);
-      setBasketCount(basket.length);
+      setBasketCount(basket?.length);
     }
 
     // Listen for storage changes (if multiple tabs are open)
@@ -24,7 +24,7 @@ export function Sidebar() {
       const savedBasket = localStorage.getItem("flashcard-basket");
       if (savedBasket) {
         const basket = JSON.parse(savedBasket);
-        setBasketCount(basket.length);
+        setBasketCount(basket?.length);
       } else {
         setBasketCount(0);
       }
@@ -101,7 +101,7 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {navigation.map((item) => {
+          {navigation?.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link

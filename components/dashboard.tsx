@@ -32,14 +32,14 @@ export function Dashboard() {
       if (termsRes.ok) {
         const termsData = await termsRes.json()
         const terms = termsData.data || []
-        setStats(prev => ({ ...prev, terms: terms.length }))
+        setStats(prev => ({ ...prev, terms: terms?.length }))
         setRecentTerms(terms.slice(0, 5))
       }
 
       if (phrasesRes.ok) {
         const phrasesData = await phrasesRes.json()
         const phrases = phrasesData.data || []
-        setStats(prev => ({ ...prev, phrases: phrases.length }))
+        setStats(prev => ({ ...prev, phrases: phrases?.length }))
         setRecentPhrases(phrases.slice(0, 5))
       }
 
@@ -85,7 +85,7 @@ export function Dashboard() {
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="text-center mb-8">
-            <h1 className="text-4xl font-bold gradient-text mb-2">
+            <h1 className="text-4xl font-bold text-violet-500 mb-2">
               🏥 پنل مدیریت اصطلاحات پزشکی
             </h1>
             <p className="text-gray-600 text-lg">
@@ -150,7 +150,7 @@ export function Dashboard() {
                   </Link>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-4">
-                  {recentTerms.map((term, index) => (
+                  {recentTerms?.map((term, index) => (
                     <motion.div 
                       key={term.id}
                       initial={{ opacity: 0, x: -20 }}
@@ -165,7 +165,7 @@ export function Dashboard() {
                         </div>
                       </div>
                       <div className="flex gap-1 mr-3">
-                        {term.categories.slice(0, 2).map(cat => (
+                        {term.categories.slice(0, 2)?.map(cat => (
                           <span
                             key={cat.id}
                             className="w-3 h-3 rounded-full border-2 border-white shadow-sm"
@@ -176,7 +176,7 @@ export function Dashboard() {
                       </div>
                     </motion.div>
                   ))}
-                  {recentTerms.length === 0 && (
+                  {recentTerms?.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                       <div className="text-4xl mb-2">📖</div>
                       هنوز اصطلاحی اضافه نشده است
@@ -199,7 +199,7 @@ export function Dashboard() {
                   </Link>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-4">
-                  {recentPhrases.map((phrase, index) => (
+                  {recentPhrases?.map((phrase, index) => (
                     <motion.div 
                       key={phrase.id}
                       initial={{ opacity: 0, x: 20 }}
@@ -213,7 +213,7 @@ export function Dashboard() {
                       </div>
                     </motion.div>
                   ))}
-                  {recentPhrases.length === 0 && (
+                  {recentPhrases?.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
                       <div className="text-4xl mb-2">💬</div>
                       هنوز عبارتی اضافه نشده است
@@ -231,7 +231,7 @@ export function Dashboard() {
                 <CardTitle className="text-2xl font-bold gradient-text">⚡ اقدامات سریع</CardTitle>
                 <CardDescription>دسترسی سریع به امکانات اصلی سیستم</CardDescription>
               </CardHeader>
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 **:text-violet-600">
                 <div className="grid gap-4 sm:grid-cols-3">
                   <Link href="/terms">
                     <Button className="w-full h-24 flex-col gap-3 modern-card hover-lift border-2 border-dashed border-blue-200 hover:border-blue-400">

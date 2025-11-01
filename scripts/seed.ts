@@ -298,10 +298,10 @@ async function main() {
   console.log('🎉 Database seeded successfully!')
   console.log('📊 Summary:')
   console.log(`   👤 Admin user: ${admin.username}`)
-  console.log(`   📁 Categories: ${categoriesData.length}`)
-  console.log(`   📖 Medical terms: ${medicalTermsData.length}`)
-  console.log(`   💬 Medical phrases: ${medicalPhrasesData.length}`)
-  console.log(`   🃏 Flashcards: ${flashcardsData.length}`)
+  console.log(`   📁 Categories: ${categoriesData?.length}`)
+  console.log(`   📖 Medical terms: ${medicalTermsData?.length}`)
+  console.log(`   💬 Medical phrases: ${medicalPhrasesData?.length}`)
+  console.log(`   🃏 Flashcards: ${flashcardsData?.length}`)
 }
 
 main()

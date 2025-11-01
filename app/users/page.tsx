@@ -128,7 +128,7 @@ export default function UsersPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <AnimatePresence>
-              {users.map((user, index) => (
+              {users?.map((user, index) => (
                 <motion.div
                   key={user.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -177,7 +177,7 @@ export default function UsersPage() {
             </AnimatePresence>
           </motion.div>
 
-          {users.length === 0 && !isLoading && (
+          {users?.length === 0 && !isLoading && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

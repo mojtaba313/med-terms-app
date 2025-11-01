@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --font-sans: "Vazirmatn", "system-ui", "sans-serif";
+
   --color-background: hsl(210 40% 98%);
   --color-foreground: hsl(222.2 84% 4.9%);
   --color-card: hsl(0 0% 100%);
@@ -37,6 +39,10 @@
 body {
   @apply bg-linear-to-br from-blue-50 via-white to-cyan-50;
   font-family: "Vazirmatn", "Segoe UI", system-ui, sans-serif;
+  font-variant-numeric: Persian;
+  -webkit-font-feature-settings: "numr";
+  /* font-feature-settings: "numr"; */
+  font-feature-settings: "ss01";
   direction: rtl;
   line-height: 1.6;
 }
@@ -61,9 +67,7 @@ body {
 
 /* دکمه‌های مدرن */
 .btn-modern {
-  @apply bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 
-         text-white font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-xl 
-         transform hover:scale-105 transition-all duration-300;
+  @apply bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 font-medium py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-violet-800!;
 }
 
 /* انیمیشن‌های جدید */
@@ -158,10 +162,11 @@ body {
 
 /* متن‌های گرادینت */
 .gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  @apply text-violet-800!;
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background-clip: text; */
 }
 
 /* استایل‌های ریسپانسیو */

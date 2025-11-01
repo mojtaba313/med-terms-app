@@ -28,9 +28,9 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform the response
-    const transformedTerms = phrases.map((phrase) => ({
+    const transformedTerms = phrases?.map((phrase) => ({
       ...phrase,
-      categories: phrase.categories.map((tc) => tc.category),
+      categories: phrase.categories?.map((tc) => tc.category),
     }));
 
     return NextResponse.json({
@@ -69,9 +69,9 @@ export async function POST(request: NextRequest) {
         explanation,
         createdBy: payload.userId,
         categories:
-          categoryIds.length > 0
+          categoryIds?.length > 0
             ? {
-                create: categoryIds.map((categoryId: string) => ({
+                create: categoryIds?.map((categoryId: string) => ({
                   category: {
                     connect: { id: categoryId },
                   },
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
 
     const transformedPhrase = {
       ...medicalPhrase,
-      categories: medicalPhrase.categories.map((tc) => tc.category),
+      categories: medicalPhrase.categories?.map((tc) => tc.category),
     };
 
     return NextResponse.json({

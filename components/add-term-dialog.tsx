@@ -1,41 +1,59 @@
-import { useState } from 'react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Category } from '../types'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Category } from "../types";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AddTermDialogProps {
-  categories: Category[]
-  onClose: () => void
-  onAdd: (term: { term: string; meaning: string; pronunciation?: string; categoryIds: string[] }) => void
+  categories: Category[];
+  onClose: () => void;
+  onAdd: (term: {
+    term: string;
+    meaning: string;
+    pronunciation?: string;
+    categoryIds: string[];
+  }) => Promise<void>;
 }
 
-export function AddTermDialog({ categories, onClose, onAdd }: AddTermDialogProps) {
-  const [term, setTerm] = useState('')
-  const [meaning, setMeaning] = useState('')
-  const [pronunciation, setPronunciation] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+export function AddTermDialog({
+  categories,
+  onClose,
+  onAdd,
+}: AddTermDialogProps) {
+  const [term, setTerm] = useState("");
+  const [meaning, setMeaning] = useState("");
+  const [pronunciation, setPronunciation] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!term.trim() || !meaning.trim()) return
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!term.trim() || !meaning.trim()) return;
+    setSubmitting(true);
 
-    onAdd({
+    await onAdd({
       term: term.trim(),
       meaning: meaning.trim(),
       pronunciation: pronunciation.trim() || undefined,
-      categoryIds: selectedCategories
-    })
-  }
+      categoryIds: selectedCategories,
+    });
+    setSubmitting(false);
+  };
 
   const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev =>
+    setSelectedCategories((prev) =>
       prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
+        ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId]
-    )
-  }
+    );
+  };
 
   return (
     <AnimatePresence>
@@ -93,21 +111,22 @@ export function AddTermDialog({ categories, onClose, onAdd }: AddTermDialogProps
 
                 <div>
                   <label className="text-sm font-medium">دسته‌بندی‌ها</label>
-                  {categories.length === 0 ? (
+                  {categories?.length === 0 ? (
                     <p className="text-sm text-muted-foreground mt-2">
-                      هیچ دسته‌بندی موجود نیست. لطفاً ابتدا دسته‌بندی ایجاد کنید.
+                      هیچ دسته‌بندی موجود نیست. لطفاً ابتدا دسته‌بندی ایجاد
+                      کنید.
                     </p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2 mt-2">
-                      {categories.map(category => (
+                      {categories?.map((category) => (
                         <motion.div
                           key={category.id}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                           className={`flex items-center gap-2 p-2 border rounded-md cursor-pointer transition-all ${
                             selectedCategories.includes(category.id)
-                              ? 'border-blue-500 bg-blue-50 shadow-sm'
-                              : 'border-gray-200 hover:border-gray-300'
+                              ? "border-blue-500 bg-blue-50 shadow-sm"
+                              : "border-gray-200 hover:border-gray-300"
                           }`}
                           onClick={() => toggleCategory(category.id)}
                         >
@@ -123,17 +142,18 @@ export function AddTermDialog({ categories, onClose, onAdd }: AddTermDialogProps
                 </div>
 
                 <div className="flex gap-2 justify-end pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={onClose}
                     className="hover:scale-105 transition-transform"
                   >
                     انصراف
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:scale-105 transition-transform"
+                    disabled={true}
                   >
                     افزودن اصطلاح
                   </Button>
@@ -144,5 +164,5 @@ export function AddTermDialog({ categories, onClose, onAdd }: AddTermDialogProps
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

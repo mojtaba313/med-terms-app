@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
         meaning,
         pronunciation,
         createdBy: payload.userId,
-        categories: categoryIds.length > 0 ? {
-          create: categoryIds.map((categoryId: string) => ({
+        categories: categoryIds?.length > 0 ? {
+          create: categoryIds?.map((categoryId: string) => ({
             category: {
               connect: { id: categoryId }
             }
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     // Transform the response to match the frontend expectations
     const transformedTerm = {
       ...medicalTerm,
-      categories: medicalTerm.categories.map(tc => tc.category)
+      categories: medicalTerm.categories?.map(tc => tc.category)
     };
 
     return NextResponse.json({ 
@@ -94,9 +94,9 @@ export async function GET(request: NextRequest) {
     });
 
     // Transform the response
-    const transformedTerms = terms.map(term => ({
+    const transformedTerms = terms?.map(term => ({
       ...term,
-      categories: term.categories.map(tc => tc.category)
+      categories: term.categories?.map(tc => tc.category)
     }));
 
     return NextResponse.json({ 

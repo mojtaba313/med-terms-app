@@ -1,67 +1,84 @@
-import { useState } from 'react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Textarea } from './ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Category } from '../types'
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Category } from "../types";
 
 interface AddPhraseDialogProps {
-  categories: Category[]
-  onClose: () => void
-  onAdd: (phrase: { phrase: string; explanation: string; categoryIds: string[] }) => void
+  categories: Category[];
+  onClose: () => void;
+  onAdd: (phrase: {
+    phrase: string;
+    explanation: string;
+    categoryIds: string[];
+  }) => Promise<void>;
 }
 
-export function AddPhraseDialog({ categories, onClose, onAdd }: AddPhraseDialogProps) {
-  const [phrase, setPhrase] = useState('')
-  const [explanation, setExplanation] = useState('')
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+export function AddPhraseDialog({
+  categories,
+  onClose,
+  onAdd,
+}: AddPhraseDialogProps) {
+  const [phrase, setPhrase] = useState("");
+  const [explanation, setExplanation] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!phrase.trim() || !explanation.trim()) return
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phrase.trim() || !explanation.trim()) return;
+    setSubmitting(true);
 
-    onAdd({
+    await onAdd({
       phrase: phrase.trim(),
       explanation: explanation.trim(),
-      categoryIds: selectedCategories
-    })
-  }
+      categoryIds: selectedCategories,
+    });
+    setSubmitting(false);
+  };
 
   const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev =>
+    setSelectedCategories((prev) =>
       prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
+        ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId]
-    )
-  }
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <CardHeader>
-          <CardTitle>Add New Medical Phrase</CardTitle>
+          <CardTitle>افزودن اصطلاح پزشکی جدید</CardTitle>
           <CardDescription>
-            Add a new medical phrase or abbreviation with its explanation
+            لطفاً اطلاعات اصطلاح پزشکی جدید را وارد کنید
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm font-medium">Phrase/Abbreviation *</label>
+              <label className="text-sm font-medium">اصطلاح</label>
               <Input
                 value={phrase}
                 onChange={(e) => setPhrase(e.target.value)}
-                placeholder="e.g., ECG, BP, MRI"
+                placeholder="مثلا MRI (مراقبت عصبی)"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Explanation *</label>
+              <label className="text-sm font-medium">توضیحات</label>
               <Textarea
                 value={explanation}
                 onChange={(e) => setExplanation(e.target.value)}
-                placeholder="e.g., Electrocardiogram - A test that measures the electrical activity of the heart"
+                placeholder="توضیح بده اصطلاح ینی چی"
                 rows={4}
                 required
               />
@@ -70,13 +87,13 @@ export function AddPhraseDialog({ categories, onClose, onAdd }: AddPhraseDialogP
             <div>
               <label className="text-sm font-medium">Categories</label>
               <div className="grid grid-cols-2 gap-2 mt-2">
-                {categories.map(category => (
+                {categories?.map((category) => (
                   <div
                     key={category.id}
                     className={`flex items-center gap-2 p-2 border rounded-md cursor-pointer transition-colors ${
                       selectedCategories.includes(category.id)
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-gray-200'
+                        ? "border-green-500 bg-green-50"
+                        : "border-gray-200"
                     }`}
                     onClick={() => toggleCategory(category.id)}
                   >
@@ -92,15 +109,19 @@ export function AddPhraseDialog({ categories, onClose, onAdd }: AddPhraseDialogP
 
             <div className="flex gap-2 justify-end pt-4">
               <Button type="button" variant="outline" onClick={onClose}>
-                Cancel
+                لغو
               </Button>
-              <Button type="submit" className="bg-green-600 hover:bg-green-700">
-                Add Phrase
+              <Button
+                disabled={submitting}
+                type="submit"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                افزودن اصطلاح
               </Button>
             </div>
           </form>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
