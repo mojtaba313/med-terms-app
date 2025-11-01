@@ -91,9 +91,15 @@ export async function POST(request: NextRequest) {
           explanation: item.explanation,
           // context: item.context || null,
           createdBy: user.id,
-          categories: {
-            connect: categoryIds.map((id) => ({ id })),
-          },
+          categories: categoryIds?.length > 0
+            ? {
+                create: categoryIds?.map((categoryId: string) => ({
+                  category: {
+                    connect: { id: categoryId },
+                  },
+                })),
+              }
+            : undefined,
         },
         include: {
           categories: true,
