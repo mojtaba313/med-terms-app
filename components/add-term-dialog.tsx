@@ -153,7 +153,7 @@ export function AddTermDialog({
                   <Button
                     type="submit"
                     className="bg-blue-600 hover:bg-blue-700 shadow-lg hover:scale-105 transition-transform"
-                    disabled={true}
+                    disabled={submitting}
                   >
                     افزودن اصطلاح
                   </Button>
